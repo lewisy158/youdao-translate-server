@@ -90,6 +90,7 @@ func youdaoTranslate(context *gin.Context) {
 		// 处理错误请求
 		return
 	}
+	logging.Infof("需要翻译文本: %s", translateWords.Text)
 
 	data := generateData(translateWords.Text)
 
@@ -111,6 +112,7 @@ func youdaoTranslate(context *gin.Context) {
 		logging.Errorf("youdaoTranslate error: %v", err)
 		return
 	}
+	logging.Infof("翻译结果: %s", string(decrypted))
 
 	context.String(http.StatusOK, string(decrypted))
 }
