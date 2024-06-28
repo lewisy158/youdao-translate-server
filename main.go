@@ -21,29 +21,6 @@ var (
 	ivHash  []byte
 )
 
-const (
-	dataString = "i=%s&from=AUTO&to=AUTO&domain=0&dictResult=true&keyid=webfanyi&sign=%s&client=%s&product=%s&appVersion=%s&vendor=%s&pointParam=%s&mysticTime=%d&keyfrom=%s"
-)
-
-func generateData(translateWords string) string {
-	client := "fanyideskweb"
-	product := "webfanyi"
-	key := "fsdsogkndfokasodnaso"
-	pointParam := "client,mysticTime,product"
-	appVersion := "1.0.0"
-	vendor := "web"
-	keyfrom := "fanyi.web"
-	mysticTime := time.Now().Unix() * 1000
-
-	hash := md5.New()
-	hash.Write([]byte(fmt.Sprintf("client=%s&mysticTime=%d&product=%s&key=%s", client, mysticTime, product, key)))
-	sign := fmt.Sprintf("%x", hash.Sum(nil))
-
-	return fmt.Sprintf(dataString,
-		translateWords, sign, client, product, appVersion, vendor, pointParam, mysticTime, keyfrom,
-	)
-}
-
 func PKCS7UnPadding(data []byte) ([]byte, error) {
 	length := len(data)
 	unpadding := int(data[length-1])
@@ -92,9 +69,27 @@ func youdaoTranslate(context *gin.Context) {
 	}
 	logging.Infof("需要翻译文本: %s", translateWords.Text)
 
-	data := generateData(translateWords.Text)
+	mysticTime := time.Now().Unix() * 1000
+	hash := md5.New()
+	hash.Write([]byte(fmt.Sprintf("client=%s&mysticTime=%d&product=%s&key=%s", "fanyideskweb", mysticTime, "webfanyi", "fsdsogkndfokasodnaso")))
+	sign := fmt.Sprintf("%x", hash.Sum(nil))
 
-	response, err := gClient.Post(context, "https://dict.youdao.com/webtranslate", data)
+	response, err := gClient.Post(context, "https://dict.youdao.com/webtranslate", map[string]any{
+		"i":          translateWords.Text,
+		"from":       "AUTO",
+		"to":         "AUTO",
+		"domain":     "0",
+		"dictResult": "true",
+		"keyid":      "webfanyi",
+		"sign":       sign,
+		"client":     "fanyideskweb",
+		"product":    "webfanyi",
+		"appVersion": "1.0.0",
+		"vendor":     "web",
+		"pointParam": "client,mysticTime,product",
+		"mysticTime": mysticTime,
+		"keyfrom":    "fanyi.web",
+	})
 	if err != nil {
 		logging.Errorf("youdaoTranslate error: %v", err)
 		return
