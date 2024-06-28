@@ -42,7 +42,7 @@ func Init(logDir, logName string) {
 	ioWriter, err := rotatelogs.New(
 		logBackupPath,                             // 日志切分文件路径
 		rotatelogs.WithLinkName(logPath),          // 日志文件link路径
-		rotatelogs.WithMaxAge(time.Hour*24*30),    // 日志最大保存30天
+		rotatelogs.WithMaxAge(time.Hour*24*3),     // 日志最大保存天数
 		rotatelogs.WithRotationTime(time.Hour*24), // 日志切分时间
 	)
 	if err != nil {
