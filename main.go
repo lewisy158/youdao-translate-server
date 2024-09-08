@@ -115,10 +115,10 @@ func youdaoTranslate(context *gin.Context) {
 func init() {
 	// 获取当前程序的绝对路径
 	executablePath, _ := os.Executable()
-	executableDir := filepath.Dir(executablePath)
+	execPath := filepath.Dir(executablePath)
 
 	// 初始化日志
-	logging.Init(executableDir, "run.log")
+	logging.Init(filepath.Join(execPath, "logs"), "run.log")
 
 	gClient.SetHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54")
 	gClient.SetHeader("Cookie", "OUTFOX_SEARCH_USER_ID_NCOO=976405377.6815147; OUTFOX_SEARCH_USER_ID=-198948307@211.83.126.235; _ga=GA1.2.1162596953.1667349221; search-popup-show=12-2")
